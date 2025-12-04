@@ -66,11 +66,13 @@ public final class Order {
         }
 
     }
+    @Override
     public String toString(){
         return "Order{" +
                 "seq=" + seq +
                 ", id=" + id +
                 ", side=" + side +
+                ".price=" + price +
                 ", remainingQty=" + remainingQty +
                 '}';
     }
