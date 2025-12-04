@@ -8,8 +8,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public final class Order {
     public enum Side {BUY, SELL}
     private static final AtomicLong ID_GEN = new AtomicLong(1);
-    private final long seq = ID_GEN.getAndIncrement();
-    private final UUID id;
+    private final long id;
     private final Side side;
     private final Instant timestamp;
     private final BigDecimal price;
@@ -17,7 +16,7 @@ public final class Order {
     private long remainingQty;
 
     public Order(Side side, BigDecimal price, long originalQty) {
-        this.id = UUID.randomUUID();
+        this.id = ID_GEN.getAndIncrement();
         this.side = side;
         this.timestamp = Instant.now();
         if(price == null || price.compareTo(BigDecimal.ZERO) <= 0){
@@ -30,7 +29,7 @@ public final class Order {
         this.remainingQty = originalQty;
     }
 
-    public UUID getId() {
+    public long getId() {
         return id;
     }
 
@@ -54,9 +53,6 @@ public final class Order {
         return remainingQty;
     }
 
-    public long getSeq() {
-        return seq;
-    }
 
     public synchronized void reduce(long q) {
         if (q > 0 && q <= remainingQty) {
@@ -66,10 +62,14 @@ public final class Order {
         }
 
     }
+
+    public boolean isFilled(){
+        return remainingQty == 0;
+    }
+
     @Override
     public String toString(){
         return "Order{" +
-                "seq=" + seq +
                 ", id=" + id +
                 ", side=" + side +
                 ".price=" + price +
